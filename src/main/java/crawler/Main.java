@@ -45,7 +45,14 @@ public class Main {
             return;
         }
 
-        CrawlerConfig config = new CrawlerConfig(startUrl, maxDepth, allowedDomains);
+        CrawlerConfig config;
+        try {
+            config = new CrawlerConfig(startUrl, maxDepth, allowedDomains);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Supplied list of Domains is invalid");
+            return;
+        }
+
         WebCrawler crawler = new WebCrawler(config);
 
         System.out.println("Starting crawl from: " + startUrl);
