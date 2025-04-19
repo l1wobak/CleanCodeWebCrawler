@@ -26,6 +26,7 @@ public class WebCrawler {
     }
 
     private void crawlRecursively(String url, int currentDepth) {
+        System.out.printf("Crawling at %s and depth %d", url, currentDepth);
         if (currentDepth > config.getMaxDepth()) return;
         if (visited.contains(url)) return;
         if (!isDomainAllowed(url)) return;
