@@ -1,6 +1,6 @@
-package main.java.crawler;
+package crawler;
 
-import main.java.crawler.model.CrawledPage;
+import crawler.model.CrawledPage;
 
 import java.util.List;
 

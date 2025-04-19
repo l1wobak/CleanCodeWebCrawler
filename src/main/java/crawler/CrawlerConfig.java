@@ -1,4 +1,4 @@
-package main.java.crawler;
+package crawler;
 
 
 import java.net.MalformedURLException;
@@ -40,5 +40,17 @@ public class CrawlerConfig {
                 ", maxDepth=" + maxDepth +
                 ", allowedDomains=" + allowedDomains +
                 '}';
+    }
+
+    public URL getStartUrl() {
+        return startUrl;
+    }
+
+    public int getMaxDepth() {
+        return maxDepth;
+    }
+
+    public Set<String> getAllowedDomains() {
+        return allowedDomains;
     }
 }
