@@ -60,7 +60,11 @@ public class Main {
 
         MarkdownWriter writer = new MarkdownWriter();
 
-        writer.write(results, "report.md");
+        try {
+            writer.write(results, "report.md");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         System.out.println("Report written to report.md");
 
     }

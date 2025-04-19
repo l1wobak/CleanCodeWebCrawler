@@ -45,7 +45,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>src.main.java.crawler.Main</mainClass>
+                            <mainClass>crawler.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
