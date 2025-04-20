@@ -27,7 +27,6 @@ public class Main {
             System.out.println("Invalid start URL: " + startUrlAddress);
             return;
         }
-
         try {
             maxDepth = Integer.parseInt(args[1]);
             if (maxDepth < 0) {
@@ -49,8 +48,8 @@ public class Main {
         try {
             config = new CrawlerConfig(startUrl, maxDepth, allowedDomains);
         } catch (IllegalArgumentException e) {
-            System.out.println("Supplied list of Domains is invalid");
-            return;
+            System.out.println("Supplied list of Domains is invalid: "+e);
+           return;
         }
 
         WebCrawler crawler = new WebCrawler(config);

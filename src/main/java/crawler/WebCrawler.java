@@ -26,9 +26,14 @@ public class WebCrawler {
     }
 
     private void crawlRecursively(String url, int currentDepth) {
-        System.out.printf("Crawling at %s and depth %d", url, currentDepth);
+        System.out.printf("Crawling at %s and depth %d\n", url, currentDepth);
         if (currentDepth > config.getMaxDepth()) return;
-        if (visited.contains(url)) return;
+
+        String normalizedUrl = normalizeUrl(url);
+        if (visited.contains(normalizedUrl)) return;
+        visited.add(normalizedUrl);
+
+
         if (!isDomainAllowed(url)) return;
 
         visited.add(url);
@@ -39,6 +44,7 @@ public class WebCrawler {
         if (page.isBroken) return;
 
         for (String link : page.links) {
+            if (visited.contains(link)) continue;
             crawlRecursively(link, currentDepth + 1);
         }
     }
@@ -46,10 +52,22 @@ public class WebCrawler {
     private boolean isDomainAllowed(String urlString) {
         try {
             urlString = urlString.trim().toLowerCase();
-            new URL(urlString);
-            return true;
+            URL url = new URL(urlString);
+            String domain = url.getHost();
+            return this.config.getAllowedDomains().contains(domain);
         } catch (MalformedURLException e) {
             return false;
         }
     }
+
+    private String normalizeUrl(String urlString) {
+        try {
+            URL url = new URL(urlString);
+            return url.getProtocol() + "://" + url.getHost();
+        } catch (MalformedURLException e) {
+            return urlString;
+        }
+    }
+
+
 }

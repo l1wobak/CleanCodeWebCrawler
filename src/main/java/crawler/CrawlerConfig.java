@@ -13,22 +13,28 @@ public class CrawlerConfig {
     private final int maxDepth;
     private final Set<String> allowedDomains;
 
-    public CrawlerConfig(URL startUrlString, int maxDepth, Set<String> domains) throws IllegalArgumentException{
+    public CrawlerConfig(URL startUrlString, int maxDepth, Set<String> domains) throws IllegalArgumentException {
         this.startUrl = startUrlString;
         this.maxDepth = maxDepth;
         this.allowedDomains = normalizeDomains(domains);
     }
 
-    private Set<String> normalizeDomains(Set<String> domains) {
+    private Set<String> normalizeDomains(Set<String> domains) throws IllegalArgumentException {
         Set<String> normalized = new HashSet<>();
         for (String domain : domains) {
             String cleaned = domain.trim().toLowerCase();
-            if (!cleaned.isEmpty()) {
-                normalized.add(cleaned);
+            if (cleaned.isEmpty()) {
+                continue;
+            }
+            try {
+                URL cleanedURL = new URL(cleaned);
+                normalized.add(cleanedURL.getHost());
+            } catch (Exception e) {
+                throw new IllegalArgumentException("received invalid domain for allowed domains: " + e);
             }
         }
         if (normalized.isEmpty()) {
-            throw new IllegalArgumentException("Allowed domains must not be empty.");
+            throw new IllegalArgumentException("Allowed domains contain at least one valid domain.");
         }
         return normalized;
     }
