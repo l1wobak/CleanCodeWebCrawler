@@ -12,10 +12,6 @@ public class WebCrawler {
     private final List<CrawledPage> resultsList;
     private final PageProcessor pageProcessor;
 
-    public WebCrawler(CrawlerConfig config) {
-        this(config, new PageProcessor());
-    }
-
     public WebCrawler(CrawlerConfig config, PageProcessor pageProcessor) {
         this.config = config;
         this.visitedPages = new HashSet<>();

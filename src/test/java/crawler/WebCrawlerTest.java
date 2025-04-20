@@ -20,7 +20,7 @@ class WebCrawlerTest {
     @BeforeEach
     void setUp() throws Exception {
         URL startUrl = new URL("https://example.com");
-        Set<String> allowedDomains = Set.of("example.com");
+        Set<String> allowedDomains = Set.of("https://example.com");
 
         config = new CrawlerConfig(startUrl, 2, allowedDomains);
         processor = new FakePageProcessor();
@@ -62,7 +62,7 @@ class WebCrawlerTest {
         processor.stubPage("https://example.com/level1", List.of("https://example.com/level2"), false);
         processor.stubPage("https://example.com/level2", List.of(), false); // should not be crawled, depth = 3
 
-        config = new CrawlerConfig(new URL("https://example.com"), 1, Set.of("example.com"));
+        config = new CrawlerConfig(new URL("https://example.com"), 1, Set.of("https://example.com"));
         crawler = new WebCrawler(config, processor);
 
         // Act

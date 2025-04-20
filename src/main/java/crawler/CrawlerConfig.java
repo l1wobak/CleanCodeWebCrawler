@@ -26,11 +26,8 @@ public class CrawlerConfig {
             if (cleaned.isEmpty()) continue;
 
             try {
-                if (!cleaned.contains("://")) {
-                    cleaned = "http://" + cleaned;
-                }
-                URL cleanedURL = new URL(cleaned);
-                normalized.add(cleanedURL.getHost());
+                URL url = new URL(cleaned);
+                normalized.add(url.getHost());
             } catch (Exception e) {
                 throw new IllegalArgumentException("received invalid domain for allowed domains: " + e);
             }
