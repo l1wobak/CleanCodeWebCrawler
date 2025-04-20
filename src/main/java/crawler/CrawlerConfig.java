@@ -23,10 +23,12 @@ public class CrawlerConfig {
         Set<String> normalized = new HashSet<>();
         for (String domain : domains) {
             String cleaned = domain.trim().toLowerCase();
-            if (cleaned.isEmpty()) {
-                continue;
-            }
+            if (cleaned.isEmpty()) continue;
+
             try {
+                if (!cleaned.contains("://")) {
+                    cleaned = "http://" + cleaned;
+                }
                 URL cleanedURL = new URL(cleaned);
                 normalized.add(cleanedURL.getHost());
             } catch (Exception e) {
@@ -34,10 +36,11 @@ public class CrawlerConfig {
             }
         }
         if (normalized.isEmpty()) {
-            throw new IllegalArgumentException("Allowed domains contain at least one valid domain.");
+            throw new IllegalArgumentException("Allowed domains must contain at least one valid domain.");
         }
         return normalized;
     }
+
 
     @Override
     public String toString() {
