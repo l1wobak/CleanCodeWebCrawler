@@ -22,7 +22,7 @@ public class Main {
         writeReport(results);
     }
 
-    private static CrawlerConfig buildConfigFromArgs(String[] args) {
+    static CrawlerConfig buildConfigFromArgs(String[] args) {
         URL startUrl = parseStartUrl(args[0]);
         if (startUrl == null) return null;
 
@@ -42,7 +42,7 @@ public class Main {
         }
     }
 
-    private static URL parseStartUrl(String urlString) {
+    static URL parseStartUrl(String urlString) {
         try {
             return new URL(urlString);
         } catch (MalformedURLException e) {
@@ -51,7 +51,7 @@ public class Main {
         }
     }
 
-    private static int parseDepth(String depthStr) {
+    static int parseDepth(String depthStr) {
         try {
             int depth = Integer.parseInt(depthStr);
             if (depth < 0) {
@@ -65,7 +65,7 @@ public class Main {
         }
     }
 
-    private static Set<String> parseAllowedDomains(String domainArg) {
+    static Set<String> parseAllowedDomains(String domainArg) {
         if (domainArg == null || domainArg.isBlank()) {
             System.out.println("No domains provided.");
             return Collections.emptySet();
@@ -87,14 +87,14 @@ public class Main {
         return domains;
     }
 
-    private static List<CrawledPage> runCrawl(CrawlerConfig config) {
+    static List<CrawledPage> runCrawl(CrawlerConfig config) {
         System.out.println("Starting crawl from: " + config.getStartUrl());
 
         WebCrawler crawler = new WebCrawler(config);
         return crawler.crawl();
     }
 
-    private static void writeReport(List<CrawledPage> results) {
+    static void writeReport(List<CrawledPage> results) {
         MarkdownWriter writer = new MarkdownWriter();
         try {
             writer.write(results, "report.md");
