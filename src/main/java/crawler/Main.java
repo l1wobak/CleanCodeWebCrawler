@@ -5,68 +5,106 @@ import crawler.model.CrawledPage;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Main {
 
     public static void main(String[] args) {
         if (args.length < 3) {
-            System.out.println("Usage: java -jar crawler.jar <URL> <depth> <domain1,domain2,...>");
+            printUsage();
             return;
         }
 
-        String startUrlAddress = args[0];
-        int maxDepth;
-        URL startUrl;
-        try {
-            startUrl = new URL(startUrlAddress);
-        } catch (MalformedURLException e) {
-            System.out.println("Invalid start URL: " + startUrlAddress);
-            return;
-        }
-        try {
-            maxDepth = Integer.parseInt(args[1]);
-            if (maxDepth < 0) {
-                System.out.println("Depth must be >= 0.");
-                return;
-            }
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid depth: " + args[1]);
-            return;
-        }
+        CrawlerConfig config = buildConfigFromArgs(args);
+        if (config == null) return;
 
-        Set<String> allowedDomains = new HashSet<>(Arrays.asList(args[2].split(",")));
-        if (allowedDomains.isEmpty()) {
-            System.out.println("Please provide at least one allowed domain.");
-            return;
-        }
+        List<CrawledPage> results = runCrawl(config);
+        writeReport(results);
+    }
 
-        CrawlerConfig config;
+    private static void printUsage() {
+        System.out.println("Usage: java -jar crawler.jar <URL> <depth> <domain1,domain2,...>");
+    }
+
+    private static CrawlerConfig buildConfigFromArgs(String[] args) {
+        URL startUrl = parseStartUrl(args[0]);
+        if (startUrl == null) return null;
+
+        int maxDepth = parseDepth(args[1]);
+        if (maxDepth < 0) return null;
+
+        Set<String> allowedDomains = parseAllowedDomains(args[2]);
+        if (allowedDomains.isEmpty()) return null;
+
         try {
-            config = new CrawlerConfig(startUrl, maxDepth, allowedDomains);
+            CrawlerConfig config = new CrawlerConfig(startUrl, maxDepth, allowedDomains);
+            System.out.println("Configuration loaded: " + config);
+            return config;
         } catch (IllegalArgumentException e) {
-            System.out.println("Supplied list of Domains is invalid: "+e);
-           return;
+            System.out.println("Invalid configuration: " + e.getMessage());
+            return null;
+        }
+    }
+
+    private static URL parseStartUrl(String urlString) {
+        try {
+            return new URL(urlString);
+        } catch (MalformedURLException e) {
+            System.out.println("Invalid start URL: " + urlString);
+            return null;
+        }
+    }
+
+    private static int parseDepth(String depthStr) {
+        try {
+            int depth = Integer.parseInt(depthStr);
+            if (depth < 0) {
+                System.out.println("Depth must be >= 0.");
+                return -1;
+            }
+            return depth;
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid depth: " + depthStr);
+            return -1;
+        }
+    }
+
+    private static Set<String> parseAllowedDomains(String domainArg) {
+        if (domainArg == null || domainArg.isBlank()) {
+            System.out.println("No domains provided.");
+            return Collections.emptySet();
         }
 
-        System.out.println(config);
+        String[] domainArray = domainArg.split(",");
+        Set<String> domains = new HashSet<>();
+        for (String d : domainArray) {
+            String cleaned = d.trim().toLowerCase();
+            if (!cleaned.isEmpty()) {
+                domains.add(cleaned);
+            }
+        }
+
+        if (domains.isEmpty()) {
+            System.out.println("Please provide at least one valid domain.");
+        }
+
+        return domains;
+    }
+
+    private static List<CrawledPage> runCrawl(CrawlerConfig config) {
+        System.out.println("Starting crawl from: " + config.getStartUrl());
 
         WebCrawler crawler = new WebCrawler(config);
+        return crawler.crawl();
+    }
 
-        System.out.println("Starting crawl from: " + startUrl);
-        List<CrawledPage> results = crawler.crawl();
-
+    private static void writeReport(List<CrawledPage> results) {
         MarkdownWriter writer = new MarkdownWriter();
-
         try {
             writer.write(results, "report.md");
+            System.out.println("Report written to report.md");
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("Error writing report: " + e.getMessage());
         }
-        System.out.println("Report written to report.md");
-
     }
 }
