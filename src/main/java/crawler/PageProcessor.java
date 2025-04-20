@@ -57,7 +57,7 @@ public class PageProcessor {
         List<String> links = new ArrayList<>();
         Elements anchors = document.select("a[href]");
         for (Element anchor : anchors) {
-            String href = anchor.attr("abs:href");
+            String href = anchor.attr("abs:href").trim().toLowerCase();
             if (!href.isEmpty()) {
                 links.add(href);
             }
