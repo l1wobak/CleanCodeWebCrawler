@@ -57,11 +57,11 @@ public class MarkdownWriter {
         Set<String> uniqueLinks = new LinkedHashSet<>();
         if (page.links == null || page.links.isEmpty()) return uniqueLinks;
 
-        String currentPageNormalized = normalizeUrl(page.url);
+        String currentPageURLNormalized = normalizeUrl(page.url);
         for (String link : page.links) {
             if (link == null || link.isBlank()) continue;
             String normalized = normalizeUrl(link);
-            if (!normalized.equals(currentPageNormalized)) {
+            if (!normalized.equals(currentPageURLNormalized)) {
                 uniqueLinks.add(link);
             }
         }
@@ -70,6 +70,9 @@ public class MarkdownWriter {
 
 
     private boolean isLinkBroken(String link, List<CrawledPage> pages) {
+        // We iterate over all pages in the list, and check if the link points to any of them
+        // If it does, then we return whether or not that page is broken
+        // This can only return true for pages that have been crawled, all uncrawled pages are always returned as not broken
         return pages.stream()
                 .filter(p -> p.url.equals(link))
                 .anyMatch(p -> p.isBroken);

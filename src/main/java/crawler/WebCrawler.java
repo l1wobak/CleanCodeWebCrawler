@@ -9,30 +9,30 @@ import java.util.*;
 public class WebCrawler {
 
     private final CrawlerConfig config;
-    private final Set<String> visited;
-    private final List<CrawledPage> result;
-    private final PageProcessor processor;
+    private final Set<String> visitedPages;
+    private final List<CrawledPage> resultsList;
+    private final PageProcessor pageProcessor;
 
     public WebCrawler(CrawlerConfig config) {
         this.config = config;
-        this.visited = new HashSet<>();
-        this.result = new ArrayList<>();
-        this.processor = new PageProcessor();
+        this.visitedPages = new HashSet<>();
+        this.resultsList = new ArrayList<>();
+        this.pageProcessor = new PageProcessor();
     }
 
     public List<CrawledPage> crawl() {
         crawlRecursively(config.getStartUrl().toString(), 0);
-        return result;
+        return resultsList;
     }
 
     private void crawlRecursively(String url, int currentDepth) {
         if (!shouldCrawl(url, currentDepth)) return;
 
-        visited.add(url);
+        visitedPages.add(url);
         System.out.printf("Crawling at %s (depth %d)\n", url, currentDepth);
 
-        CrawledPage page = processor.processPage(url, currentDepth);
-        result.add(page);
+        CrawledPage page = pageProcessor.processPage(url, currentDepth);
+        resultsList.add(page);
 
         if (page.isBroken) return;
 
@@ -43,7 +43,7 @@ public class WebCrawler {
     private boolean shouldCrawl(String url, int currentDepth) {
         if (currentDepth > config.getMaxDepth()) return false;
         if (url.isEmpty()) return false;
-        if (visited.contains(url)) return false;
+        if (visitedPages.contains(url)) return false;
         if (!isDomainAllowed(url)) return false;
         return true;
     }
@@ -51,7 +51,7 @@ public class WebCrawler {
     private void crawlFollowupLinks(CrawledPage page, int nextDepth) {
         for (String link : page.links) {
             String normalizedLink = normalizeUrl(link);
-            if (!normalizedLink.isEmpty() && !visited.contains(normalizedLink)) {
+            if (!normalizedLink.isEmpty() && !visitedPages.contains(normalizedLink)) {
                 crawlRecursively(link, nextDepth);
             }
         }

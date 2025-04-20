@@ -11,7 +11,7 @@ public class Main {
 
     public static void main(String[] args) {
         if (args.length < 3) {
-            printUsage();
+            System.out.println("Usage: java -jar crawler.jar <URL> <depth> <domain1,domain2,...>");
             return;
         }
 
@@ -20,10 +20,6 @@ public class Main {
 
         List<CrawledPage> results = runCrawl(config);
         writeReport(results);
-    }
-
-    private static void printUsage() {
-        System.out.println("Usage: java -jar crawler.jar <URL> <depth> <domain1,domain2,...>");
     }
 
     private static CrawlerConfig buildConfigFromArgs(String[] args) {
