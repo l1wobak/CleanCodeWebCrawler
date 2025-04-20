@@ -26,33 +26,42 @@ public class WebCrawler {
     }
 
     private void crawlRecursively(String url, int currentDepth) {
+        if (!shouldCrawl(url, currentDepth)) return;
 
-        if (currentDepth > config.getMaxDepth()) return;
-        if (!isDomainAllowed(url)) return;
-        String normalizedUrl = normalizeUrl(url);
-        if (this.visited.contains(normalizedUrl)) return;
-        this.visited.add(normalizedUrl);
+        visited.add(url);
+        System.out.printf("Crawling at %s (depth %d)\n", url, currentDepth);
 
-        System.out.printf("Crawling at %s and depth %d\n", url, currentDepth);
+        CrawledPage page = processor.processPage(url, currentDepth);
+        result.add(page);
 
-        CrawledPage crawledPage = processor.processPage(url, currentDepth);
-        result.add(crawledPage);
+        if (page.isBroken) return;
 
-        if (crawledPage.isBroken) return;
+        crawlFollowupLinks(page, currentDepth + 1);
+    }
 
-        for (String link : crawledPage.links) {
-            normalizedUrl = normalizeUrl(url);
-            if (this.visited.contains(normalizedUrl)) continue;
-            crawlRecursively(link, currentDepth + 1);
+
+    private boolean shouldCrawl(String url, int currentDepth) {
+        if (currentDepth > config.getMaxDepth()) return false;
+        if (url.isEmpty()) return false;
+        if (visited.contains(url)) return false;
+        if (!isDomainAllowed(url)) return false;
+        return true;
+    }
+
+    private void crawlFollowupLinks(CrawledPage page, int nextDepth) {
+        for (String link : page.links) {
+            String normalizedLink = normalizeUrl(link);
+            if (!normalizedLink.isEmpty() && !visited.contains(normalizedLink)) {
+                crawlRecursively(link, nextDepth);
+            }
         }
     }
 
     private boolean isDomainAllowed(String urlString) {
         try {
-            urlString = normalizeUrl(urlString);
             URL url = new URL(urlString);
             String domain = url.getHost();
-            return this.config.getAllowedDomains().contains(domain);
+            return config.getAllowedDomains().contains(domain);
         } catch (MalformedURLException e) {
             return false;
         }
@@ -61,11 +70,10 @@ public class WebCrawler {
     private String normalizeUrl(String urlString) {
         try {
             URL url = new URL(urlString);
-            return url.getProtocol() + "://" + url.getHost();
+            String path = url.getPath().replaceAll("/$", "");
+            return url.getProtocol() + "://" + url.getHost() + path;
         } catch (MalformedURLException e) {
             return "";
         }
     }
-
-
 }
