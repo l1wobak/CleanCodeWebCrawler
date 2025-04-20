@@ -7,7 +7,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +14,7 @@ public class PageProcessor {
 
     private static final int TIMEOUT_MS = 5000;
 
-    public CrawledPage process(String url, int depth) {
+    public CrawledPage processPage(String url, int depth) {
         CrawledPage page = new CrawledPage();
         page.url = url;
         page.depth = depth;
@@ -24,29 +23,45 @@ public class PageProcessor {
         page.isBroken = false;
 
         try {
-            Document doc = Jsoup.connect(url).timeout(TIMEOUT_MS).get();
-
-            // Extract headings h1 to h6
-            for (int i = 1; i <= 6; i++) {
-                Elements headers = doc.select("h" + i);
-                for (Element header : headers) {
-                    page.headings.add(header.text().trim());
-                }
-            }
-
-            // Extract links
-            Elements anchors = doc.select("a[href]");
-            for (Element anchor : anchors) {
-                String href = anchor.attr("abs:href"); // resolve to absolute
-                if (!href.isEmpty()) {
-                    page.links.add(href);
-                }
-            }
-
+            Document document = loadDocument(url);
+            page.headings = extractHeadings(document);
+            page.links = extractLinks(document);
         } catch (IOException e) {
             page.isBroken = true;
         }
 
         return page;
+    }
+
+    private Document loadDocument(String url) throws IOException {
+        return Jsoup.connect(url)
+                .timeout(TIMEOUT_MS)
+                .get();
+    }
+
+    private List<String> extractHeadings(Document document) {
+        List<String> headings = new ArrayList<>();
+        for (int i = 1; i <= 6; i++) {
+            Elements headerElements = document.select("h" + i);
+            for (Element header : headerElements) {
+                String text = header.text().trim();
+                if (!text.isEmpty()) {
+                    headings.add(text);
+                }
+            }
+        }
+        return headings;
+    }
+
+    private List<String> extractLinks(Document document) {
+        List<String> links = new ArrayList<>();
+        Elements anchors = document.select("a[href]");
+        for (Element anchor : anchors) {
+            String href = anchor.attr("abs:href");
+            if (!href.isEmpty()) {
+                links.add(href);
+            }
+        }
+        return links;
     }
 }

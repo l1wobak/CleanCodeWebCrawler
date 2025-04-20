@@ -35,7 +35,7 @@ public class WebCrawler {
 
         System.out.printf("Crawling at %s and depth %d\n", url, currentDepth);
 
-        CrawledPage crawledPage = processor.process(url, currentDepth);
+        CrawledPage crawledPage = processor.processPage(url, currentDepth);
         result.add(crawledPage);
 
         if (crawledPage.isBroken) return;
