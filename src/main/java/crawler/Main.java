@@ -52,6 +52,8 @@ public class Main {
            return;
         }
 
+        System.out.println(config);
+
         WebCrawler crawler = new WebCrawler(config);
 
         System.out.println("Starting crawl from: " + startUrl);
