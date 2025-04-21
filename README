@@ -1,18 +1,18 @@
-# 🕸️ Java Web Crawler
+# Java Web Crawler
 
 A simple and configurable web crawler written in Java for the Clean Code assignment.
 It recursively crawls a given website and its links (limited by depth and domain), collecting page headings and links. The output is saved as a Markdown report.
 
 ---
 
-## 📦 Prerequisites
+## Prerequisites
 
 - Java 17+
 - Maven 3+
 
 ---
 
-## 🚀 How to Build
+## How to Build
 
 From the project root, run:
 
@@ -24,7 +24,7 @@ This will compile the crawler and package it into a runnable JAR in the `target/
 
 ---
 
-## ▶️ How to Run
+## How to Run
 
 The crawler requires **3 arguments**:
 
@@ -32,13 +32,13 @@ The crawler requires **3 arguments**:
 2. **Depth** – How deep the crawler should traverse links
 3. **Allowed Domains** – A comma-separated list of domains to restrict crawling to
 
-### 📌 Command Format
+### Command Format
 
 ```
 java -jar target/java-web-crawler-1.0-SNAPSHOT.jar <StartUrl> <depth> <domain1,domain2,...>
 ```
 
-### ✅ Example
+### Example
 
 ```
 java -jar target/java-web-crawler-1.0-SNAPSHOT.jar https://gilead-verein.at/ 2 https://gilead-verein.at/,http://www.klagenfurt.at/,https://www.stw.at
@@ -49,7 +49,7 @@ An example output can be found in `report.md`.
 
 ---
 
-## 📄 Output
+## Output
 
 The crawler generates a file called `report.md` in the directory where the program is started.
 It contains:
@@ -61,7 +61,7 @@ It contains:
 
 ---
 
-## 🧪 Testing
+## Testing
 
 To run the automated unit tests:
 
@@ -71,6 +71,6 @@ mvn test
 
 ---
 
-## 👤 Author
+## Author
 
-This project was created by **Lukas Wobak** as part of the Clean Code course assignment.
+This project was created by Lukas Wobak as part of the Clean Code course assignment.
