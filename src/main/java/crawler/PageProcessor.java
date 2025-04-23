@@ -14,7 +14,7 @@ public class PageProcessor {
 
     private static final int TIMEOUT_MS = 5000;
 
-    public CrawledPage processPage(String url, int depth) {
+    protected CrawledPage processPage(String url, int depth) {
         CrawledPage page = new CrawledPage();
         page.url = url;
         page.depth = depth;

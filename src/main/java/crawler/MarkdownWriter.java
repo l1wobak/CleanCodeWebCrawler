@@ -8,7 +8,7 @@ import java.util.*;
 
 public class MarkdownWriter {
 
-    public void write(List<CrawledPage> pages, String filename) throws IOException {
+    protected void write(List<CrawledPage> pages, String filename) throws IOException {
         try (FileWriter writer = new FileWriter(filename)) {
             writer.write("# Crawled Website Report\n\n");
 

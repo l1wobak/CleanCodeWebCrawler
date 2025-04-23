@@ -19,7 +19,7 @@ public class WebCrawler {
         this.pageProcessor = pageProcessor;
     }
 
-    public List<CrawledPage> crawl() {
+    protected List<CrawledPage> crawl() {
         crawlRecursively(config.getStartUrl().toString(), 0);
         return resultsList;
     }
@@ -38,7 +38,7 @@ public class WebCrawler {
         crawlFollowupLinks(page, currentDepth + 1);
     }
 
-    boolean shouldCrawl(String url, int currentDepth) {
+    protected boolean shouldCrawl(String url, int currentDepth) {
         if (currentDepth > config.getMaxDepth()) return false;
         if (url.isEmpty()) return false;
 
@@ -49,20 +49,12 @@ public class WebCrawler {
         return true;
     }
 
-    void crawlFollowupLinks(CrawledPage page, int nextDepth) {
+    protected void crawlFollowupLinks(CrawledPage page, int nextDepth) {
         for (String link : page.links) {
             String normalizedLink = WebCrawlerUtils.normalizeUrl(link);
             if (!normalizedLink.isEmpty() && !visitedPages.contains(normalizedLink)) {
                 crawlRecursively(link, nextDepth);
             }
         }
-    }
-
-    Set<String> getVisitedPages() {
-        return visitedPages;
-    }
-
-    List<CrawledPage> getResultsList() {
-        return resultsList;
     }
 }

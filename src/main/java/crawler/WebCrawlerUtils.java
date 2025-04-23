@@ -6,7 +6,7 @@ import java.util.Set;
 
 public class WebCrawlerUtils {
 
-    public static String normalizeUrl(String urlString) {
+    protected static String normalizeUrl(String urlString) {
         try {
             URL url = new URL(urlString);
             String path = url.getPath().replaceAll("/$", "");
@@ -16,7 +16,7 @@ public class WebCrawlerUtils {
         }
     }
 
-    public static boolean isDomainAllowed(String urlString, Set<String> allowedDomains) {
+    protected static boolean isDomainAllowed(String urlString, Set<String> allowedDomains) {
         try {
             URL url = new URL(urlString);
             return allowedDomains.contains(url.getHost());
