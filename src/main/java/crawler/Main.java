@@ -88,7 +88,7 @@ public class Main {
     }
 
     protected static List<CrawledPage> runCrawl(CrawlerConfig config) {
-        System.out.println("Starting crawl from: " + config.getStartUrl());
+        System.out.println("Starting crawl from: " + config.getStartUrls());
 
         WebCrawler crawler = new WebCrawler(config, new PageProcessor());
         return crawler.crawl();

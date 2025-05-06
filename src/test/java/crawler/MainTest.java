@@ -96,7 +96,7 @@ class MainTest {
         // Assert
         assertNotNull(config);
         assertEquals(1, config.getMaxDepth());
-        assertEquals( "https://example.com", config.getStartUrl().toString());
+        assertEquals( "https://example.com", config.getStartUrls().toString());
         assertTrue(config.getAllowedDomains().contains("example.com"));
     }
 

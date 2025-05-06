@@ -20,7 +20,7 @@ class CrawlerConfigTest {
         CrawlerConfig config = new CrawlerConfig(startUrl, 2, domains);
 
         // Assert
-        assertEquals(startUrl, config.getStartUrl());
+        assertEquals(startUrl, config.getStartUrls());
         assertEquals(2, config.getMaxDepth());
         assertTrue(config.getAllowedDomains().contains("example.com"));
     }

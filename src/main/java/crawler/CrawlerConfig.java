@@ -1,20 +1,16 @@
 package crawler;
 
 
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public class CrawlerConfig {
-    private final URL startUrl;
+    private final List<URL> startUrls;
     private final int maxDepth;
     private final Set<String> allowedDomains;
 
-    public CrawlerConfig(URL startUrlString, int maxDepth, Set<String> domains) throws IllegalArgumentException {
-        this.startUrl = startUrlString;
+    public CrawlerConfig(List<URL> startUrlString, int maxDepth, Set<String> domains) throws IllegalArgumentException {
+        this.startUrls = startUrlString;
         this.maxDepth = maxDepth;
         this.allowedDomains = normalizeDomains(domains);
     }
@@ -42,14 +38,14 @@ public class CrawlerConfig {
     @Override
     public String toString() {
         return "CrawlerConfig{" +
-                "startUrl=" + startUrl +
+                "startUrl=" + startUrls +
                 ", maxDepth=" + maxDepth +
                 ", allowedDomains=" + allowedDomains +
                 '}';
     }
 
-    public URL getStartUrl() {
-        return startUrl;
+    public List<URL> getStartUrls() {
+        return startUrls;
     }
 
     public int getMaxDepth() {
