@@ -3,6 +3,7 @@ package crawler;
 import crawler.model.CrawledPage;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -23,8 +24,8 @@ public class Main {
     }
 
     protected static CrawlerConfig buildConfigFromArgs(String[] args) {
-        URL startUrl = parseStartUrl(args[0]);
-        if (startUrl == null) return null;
+        List<URL> startUrls = parseStartUrls(args[0]);
+        if (startUrls == null) return null;
 
         int maxDepth = parseDepth(args[1]);
         if (maxDepth < 0) return null;
@@ -33,7 +34,7 @@ public class Main {
         if (allowedDomains.isEmpty()) return null;
 
         try {
-            CrawlerConfig config = new CrawlerConfig(startUrl, maxDepth, allowedDomains);
+            CrawlerConfig config = new CrawlerConfig(startUrls, maxDepth, allowedDomains);
             System.out.println("Configuration loaded: " + config);
             return config;
         } catch (IllegalArgumentException e) {
@@ -42,13 +43,31 @@ public class Main {
         }
     }
 
-    protected static URL parseStartUrl(String urlString) {
-        try {
-            return new URL(urlString);
-        } catch (MalformedURLException e) {
-            System.out.println("Invalid start URL: " + urlString);
+    protected static ArrayList<URL> parseStartUrls(String urlArg) {
+        if (urlArg == null || urlArg.isBlank()) {
+            System.out.println("No start URLs provided.");
             return null;
         }
+
+        String[] urlArray = urlArg.split(",");
+        ArrayList<URL> startUrls = new ArrayList<>();
+        for (String url : urlArray) {
+            String cleanedUrl = url.trim().toLowerCase();
+            if (!cleanedUrl.isEmpty()) {
+                try {
+                    startUrls.add(new URL(cleanedUrl));
+                } catch (MalformedURLException e) {
+                    System.out.printf("Provided StartURL %s is invalid: %s", cleanedUrl, e);
+                }
+            }
+        }
+
+        if (startUrls.isEmpty()) {
+            System.out.println("Please provide at least one valid start URL.");
+            return null;
+        }
+
+        return startUrls;
     }
 
     protected static int parseDepth(String depthStr) {
