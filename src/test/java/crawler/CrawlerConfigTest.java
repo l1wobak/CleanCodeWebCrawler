@@ -20,7 +20,7 @@ class CrawlerConfigTest {
         Set<String> domains = Set.of("https://example.com");
 
         // Act
-        CrawlerConfig config = new CrawlerConfig(startUrl, 2, domains);
+        CrawlerConfig config = new CrawlerConfig(startUrl, 2, domains, null);
 
         // Assert
         assertEquals(startUrl, config.getStartUrls());
@@ -36,7 +36,7 @@ class CrawlerConfigTest {
         Set<String> domains = Set.of("  https://Example.COM/path  ");
 
         // Act
-        CrawlerConfig config = new CrawlerConfig(startUrl, 1, domains);
+        CrawlerConfig config = new CrawlerConfig(startUrl, 1, domains, null);
 
         // Assert
         assertTrue(config.getAllowedDomains().contains("example.com"));
@@ -51,7 +51,7 @@ class CrawlerConfigTest {
 
         // Act (and partial Assert)
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
-                new CrawlerConfig(startUrl, 1, domains)
+                new CrawlerConfig(startUrl, 1, domains, null)
         );
         // Assert
         assertTrue(exception.getMessage().contains("invalid domain"));
@@ -66,7 +66,7 @@ class CrawlerConfigTest {
 
         // Act (and partial Assert)
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
-                new CrawlerConfig(startUrl, 1, domains)
+                new CrawlerConfig(startUrl, 1, domains, null)
         );
         // Assert
         assertTrue(exception.getMessage().contains("at least one valid domain"));
@@ -81,7 +81,7 @@ class CrawlerConfigTest {
 
         // Act (and partial Assert)
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
-                new CrawlerConfig(startUrl, 1, domains)
+                new CrawlerConfig(startUrl, 1, domains, null)
         );
         // Assert
         assertTrue(exception.getMessage().contains("invalid domain"));

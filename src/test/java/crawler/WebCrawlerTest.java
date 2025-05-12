@@ -1,6 +1,8 @@
 package crawler;
 
 import crawler.model.CrawledPage;
+import crawler.HtmlFetcher;
+import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -22,20 +24,19 @@ class WebCrawlerTest {
         URL startUrl = new URL("https://example.com");
         Set<String> allowedDomains = Set.of("https://example.com");
 
-        config = new CrawlerConfig(startUrl, 2, allowedDomains);
-        processor = new FakePageProcessor();
+        HtmlFetcher dummyFetcher = url -> null;
+
+        config = new CrawlerConfig(List.of(startUrl), 2, allowedDomains, dummyFetcher);
+        processor = new FakePageProcessor(dummyFetcher);
         crawler = new WebCrawler(config, processor);
     }
 
     @Test
     void crawlsInitialPage() {
-        // Arrange
         processor.stubPage("https://example.com", List.of(), false);
 
-        // Act
         List<CrawledPage> result = crawler.crawl();
 
-        // Assert
         assertEquals(1, result.size());
         assertEquals("https://example.com", result.get(0).url);
         assertFalse(result.get(0).isBroken);
@@ -43,59 +44,49 @@ class WebCrawlerTest {
 
     @Test
     void skipsBrokenPages() {
-        // Arrange
         processor.stubPage("https://example.com", List.of("https://example.com/broken"), false);
         processor.stubPage("https://example.com/broken", List.of(), true);
 
-        // Act
         List<CrawledPage> result = crawler.crawl();
 
-        // Assert
         assertEquals(2, result.size());
         assertTrue(result.stream().anyMatch(p -> p.isBroken));
     }
 
     @Test
     void respectsMaxDepth() throws MalformedURLException {
-        // Arrange
         processor.stubPage("https://example.com", List.of("https://example.com/level1"), false);
         processor.stubPage("https://example.com/level1", List.of("https://example.com/level2"), false);
-        processor.stubPage("https://example.com/level2", List.of(), false); // should not be crawled, depth = 3
+        processor.stubPage("https://example.com/level2", List.of(), false);
 
-        config = new CrawlerConfig(new URL("https://example.com"), 1, Set.of("https://example.com"));
+        HtmlFetcher dummyFetcher = url -> null;
+        config = new CrawlerConfig(List.of(new URL("https://example.com")), 1, Set.of("https://example.com"), dummyFetcher);
+        processor = new FakePageProcessor(dummyFetcher);
         crawler = new WebCrawler(config, processor);
 
-        // Act
         List<CrawledPage> result = crawler.crawl();
 
-        // Assert
         assertEquals(2, result.size());
         assertTrue(result.stream().noneMatch(p -> p.url.contains("level2")));
     }
 
     @Test
     void avoidsDuplicateCrawls() {
-        // Arrange
         processor.stubPage("https://example.com", List.of("https://example.com/page"), false);
         processor.stubPage("https://example.com/page", List.of("https://example.com"), false);
 
-        // Act
         List<CrawledPage> result = crawler.crawl();
 
-        // Assert
         assertEquals(2, result.size(), "Each page should only be crawled once");
     }
 
     @Test
-    void skipsPagesOutsideDomain() throws Exception {
-        // Arrange
+    void skipsPagesOutsideDomain() {
         processor.stubPage("https://example.com", List.of("https://other.com/page"), false);
         processor.stubPage("https://other.com/page", List.of(), false);
 
-        // Act
         List<CrawledPage> result = crawler.crawl();
 
-        // Assert
         assertEquals(1, result.size());
         assertEquals("https://example.com", result.get(0).url);
     }
@@ -104,10 +95,14 @@ class WebCrawlerTest {
     static class FakePageProcessor extends PageProcessor {
         private final java.util.Map<String, CrawledPage> stubbedPages = new java.util.HashMap<>();
 
+        public FakePageProcessor(HtmlFetcher fetcher) {
+            super(fetcher);
+        }
+
         public void stubPage(String url, List<String> links, boolean isBroken) {
             CrawledPage page = new CrawledPage();
             page.url = url;
-            page.depth = -1; // not important for test
+            page.depth = -1;
             page.links = links;
             page.headings = List.of("Fake heading");
             page.isBroken = isBroken;

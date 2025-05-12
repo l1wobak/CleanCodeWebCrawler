@@ -55,4 +55,5 @@ public class CrawlerConfig {
     public Set<String> getAllowedDomains() {
         return allowedDomains;
     }
+
 }

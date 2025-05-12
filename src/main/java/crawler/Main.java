@@ -12,7 +12,7 @@ public class Main {
 
     public static void main(String[] args) {
         if (args.length < 3) {
-            System.out.println("Usage: java -jar crawler.jar <URL> <depth> <domain1,domain2,...>");
+            System.out.println("Usage: java -jar crawler.jar <StartURL1,StartURL2> <depth> <domain1,domain2,...>");
             return;
         }
 
@@ -109,7 +109,7 @@ public class Main {
     protected static List<CrawledPage> runCrawl(CrawlerConfig config) {
         System.out.println("Starting crawl from: " + config.getStartUrls());
 
-        WebCrawler crawler = new WebCrawler(config, new PageProcessor());
+        WebCrawler crawler = new WebCrawler(config, new PageProcessor(new JsoupHtmlFetcher(5000)));
         return crawler.crawl();
     }
 

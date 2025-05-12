@@ -1,20 +1,22 @@
 package crawler;
 
 import crawler.model.CrawledPage;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PageProcessor {
 
-    private static final int TIMEOUT_MS = 5000;
+    private final HtmlFetcher fetcher;
 
-    protected CrawledPage processPage(String url, int depth) {
+    public PageProcessor(HtmlFetcher fetcher) {
+        this.fetcher = fetcher;
+    }
+
+    public CrawledPage processPage(String url, int depth) {
         CrawledPage page = new CrawledPage();
         page.url = url;
         page.depth = depth;
@@ -23,20 +25,14 @@ public class PageProcessor {
         page.isBroken = false;
 
         try {
-            Document document = loadDocument(url);
+            Document document = fetcher.fetchDocumentFromUrl(url);
             page.headings = extractHeadings(document);
             page.links = extractLinks(document);
-        } catch (IOException e) {
+        } catch (Exception e) {
             page.isBroken = true;
         }
 
         return page;
-    }
-
-    private Document loadDocument(String url) throws IOException {
-        return Jsoup.connect(url)
-                .timeout(TIMEOUT_MS)
-                .get();
     }
 
     private List<String> extractHeadings(Document document) {
