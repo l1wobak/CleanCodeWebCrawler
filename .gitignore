@@ -58,3 +58,6 @@ release.properties
 
 # VS Code
 .vscode/
+
+#result
+report.md

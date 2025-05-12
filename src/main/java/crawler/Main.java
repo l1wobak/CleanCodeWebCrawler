@@ -20,7 +20,7 @@ public class Main {
         if (config == null) return;
 
         List<CrawledPage> results = runCrawl(config);
-        writeReport(results);
+        writeReport(results, config);
     }
 
     protected static CrawlerConfig buildConfigFromArgs(String[] args) {
@@ -113,10 +113,10 @@ public class Main {
         return crawler.crawl();
     }
 
-    protected static void writeReport(List<CrawledPage> results) {
+    protected static void writeReport(List<CrawledPage> results, CrawlerConfig config) {
         MarkdownWriter writer = new MarkdownWriter();
         try {
-            writer.write(results, "report.md");
+            writer.write(results, "report.md", config.getStartUrls());
             System.out.println("Report written to report.md");
         } catch (IOException e) {
             System.out.println("Error writing report: " + e.getMessage());

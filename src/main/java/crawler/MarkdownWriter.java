@@ -4,17 +4,27 @@ import crawler.model.CrawledPage;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URL;
 import java.util.*;
 
 public class MarkdownWriter {
 
-    protected void write(List<CrawledPage> pages, String filename) throws IOException {
+    protected void write(List<CrawledPage> pages, String filename, List<URL> startUrls) throws IOException {
         try (FileWriter writer = new FileWriter(filename)) {
             writer.write("# Crawled Website Report\n\n");
 
-            for (CrawledPage page : pages) {
-                writePage(writer, page, pages);
-                writer.write("\n");
+            for (URL root : startUrls) {
+                writer.write(String.format("## Results for: %s\n\n", root));
+
+                List<CrawledPage> forRoot = pages.stream()
+                        .filter(p -> p.fromStartUrls.contains(root))
+                        .sorted(Comparator.comparingInt(p -> p.depth))
+                        .toList();
+
+                for (CrawledPage page : forRoot) {
+                    writePage(writer, page, forRoot);
+                    writer.write("\n");
+                }
             }
         }
     }
@@ -23,7 +33,7 @@ public class MarkdownWriter {
         String indent = MarkdownUtils.indent(page.depth);
         String arrow = "→".repeat(Math.max(1, page.depth));
 
-        writer.write(String.format("%s## %s %s\n", indent, arrow, page.url));
+        writer.write(String.format("%s### %s %s\n", indent, arrow, page.url));
         writer.write(String.format("%s- [%s] Page %s\n", indent,
                 page.isBroken ? "✗" : "✓",
                 page.isBroken ? "could not be loaded" : "loaded successfully"));
