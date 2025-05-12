@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,7 +14,9 @@ class CrawlerConfigTest {
     @Test
     void shouldCreateValidConfig() throws MalformedURLException {
         // Arrange
-        URL startUrl = new URL("https://example.com");
+
+        ArrayList<URL> startUrl = new ArrayList<>();
+        startUrl.add(new URL("https://test.com"));
         Set<String> domains = Set.of("https://example.com");
 
         // Act
@@ -28,7 +31,8 @@ class CrawlerConfigTest {
     @Test
     void shouldNormalizeDomains() throws MalformedURLException {
         // Arrange
-        URL startUrl = new URL("https://test.com");
+        ArrayList<URL> startUrl = new ArrayList<>();
+        startUrl.add(new URL("https://test.com"));
         Set<String> domains = Set.of("  https://Example.COM/path  ");
 
         // Act
@@ -41,7 +45,8 @@ class CrawlerConfigTest {
     @Test
     void shouldThrowOnInvalidDomain() throws MalformedURLException {
         // Arrange
-        URL startUrl = new URL("https://example.com");
+        ArrayList<URL> startUrl = new ArrayList<>();
+        startUrl.add(new URL("https://test.com"));
         Set<String> domains = Set.of("bad:url");
 
         // Act (and partial Assert)
@@ -55,7 +60,8 @@ class CrawlerConfigTest {
     @Test
     void shouldThrowOnEmptyDomainList() throws MalformedURLException {
         // Arrange
-        URL startUrl = new URL("https://example.com");
+        ArrayList<URL> startUrl = new ArrayList<>();
+        startUrl.add(new URL("https://test.com"));
         Set<String> domains = Set.of("   "); // whitespace only
 
         // Act (and partial Assert)
@@ -69,7 +75,8 @@ class CrawlerConfigTest {
     @Test
     void shouldThrowOnPartiallyInvalidDomainList() throws MalformedURLException {
         // Arrange
-        URL startUrl = new URL("https://example.com");
+        ArrayList<URL> startUrl = new ArrayList<>();
+        startUrl.add(new URL("https://test.com"));
         Set<String> domains = Set.of("https://example.com", "not a url");
 
         // Act (and partial Assert)
