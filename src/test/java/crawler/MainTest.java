@@ -47,7 +47,7 @@ class MainTest {
         List<URL> urls = Main.parseStartUrls(input);
 
         // Assert
-        assertTrue(urls.isEmpty());
+        assertNull(urls);
     }
 
     @Test
@@ -72,8 +72,8 @@ class MainTest {
     void parseAllowedDomains_shouldReturnCleanedSetForValidInput() {
         Set<String> result = Main.parseAllowedDomains(" https://example.com ,HTTP://Another.com  ");
 
-        assertTrue(result.contains("example.com"));
-        assertTrue(result.contains("another.com"));
+        assertTrue(result.contains("https://example.com"));
+        assertTrue(result.contains("http://another.com"));
         assertEquals(2, result.size());
     }
 

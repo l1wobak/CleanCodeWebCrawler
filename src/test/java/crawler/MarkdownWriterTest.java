@@ -43,6 +43,7 @@ class MarkdownWriterTest {
     void marksBrokenLinks() throws IOException {
         CrawledPage ok = createBasicPage();
         CrawledPage broken = createBrokenPage();
+        broken.fromStartUrls.add(URI.create(ok.url).toURL());
         ok.links = List.of(broken.url);
         Path file = tempDir.resolve("report-broken.md");
 

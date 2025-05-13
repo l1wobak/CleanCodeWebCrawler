@@ -72,7 +72,7 @@ public class WebCrawler {
         page.fromStartUrls.add(rootStartUrl);
         resultsList.add(page);
 
-        if (page.isBroken) return;
+        if (page.isBroken || page.links == null) return;
 
         for (String link : page.links) {
             String normalizedLink = WebCrawlerUtils.normalizeUrl(link);

@@ -21,7 +21,7 @@ class PageProcessorTest {
     void setUp() throws IOException {
         server = new MockWebServer();
         server.start();
-        processor = new PageProcessor();
+        processor = new PageProcessor(new JsoupHtmlFetcher(5000));
     }
 
     @AfterEach

@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,7 +27,7 @@ class WebCrawlerTest {
 
         HtmlFetcher dummyFetcher = url -> null;
 
-        config = new CrawlerConfig(List.of(startUrl), 2, allowedDomains, dummyFetcher);
+        config = new CrawlerConfig(List.of(startUrl), 2, allowedDomains);
         processor = new FakePageProcessor(dummyFetcher);
         crawler = new WebCrawler(config, processor);
     }
@@ -57,15 +58,14 @@ class WebCrawlerTest {
     void respectsMaxDepth() throws MalformedURLException {
         processor.stubPage("https://example.com", List.of("https://example.com/level1"), false);
         processor.stubPage("https://example.com/level1", List.of("https://example.com/level2"), false);
-        processor.stubPage("https://example.com/level2", List.of(), false);
+        processor.stubPage("https://example.com/level2", List.of("https://example.com/level3"), false);
 
-        HtmlFetcher dummyFetcher = url -> null;
-        config = new CrawlerConfig(List.of(new URL("https://example.com")), 1, Set.of("https://example.com"), dummyFetcher);
-        processor = new FakePageProcessor(dummyFetcher);
+        config = new CrawlerConfig(List.of(new URL("https://example.com")), 1, Set.of("https://example.com"));
         crawler = new WebCrawler(config, processor);
 
         List<CrawledPage> result = crawler.crawl();
 
+        assertNotNull(result);
         assertEquals(2, result.size());
         assertTrue(result.stream().noneMatch(p -> p.url.contains("level2")));
     }
@@ -106,6 +106,7 @@ class WebCrawlerTest {
             page.links = links;
             page.headings = List.of("Fake heading");
             page.isBroken = isBroken;
+            page.fromStartUrls =  ConcurrentHashMap.newKeySet();
             stubbedPages.put(url, page);
         }
 
