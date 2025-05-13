@@ -83,13 +83,16 @@ public class WebCrawler {
     }
 
     private void addStartUrlToExistingPage(String normalizedUrl, URL rootStartUrl) {
-        for (CrawledPage page : resultsList) {
-            if (normalizedUrl.equals(WebCrawlerUtils.normalizeUrl(page.url))) {
-                page.fromStartUrls.add(rootStartUrl);
-                break;
+        synchronized (resultsList) {
+            for (CrawledPage page : resultsList) {
+                if (normalizedUrl.equals(WebCrawlerUtils.normalizeUrl(page.url))) {
+                    page.fromStartUrls.add(rootStartUrl);
+                    break;
+                }
             }
         }
     }
+
 
     protected boolean shouldCrawl(String url, int currentDepth) {
         if (currentDepth > config.getMaxDepth()) return false;
