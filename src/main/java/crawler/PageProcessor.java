@@ -11,6 +11,7 @@ import java.util.List;
 public class PageProcessor {
 
     private final HtmlFetcher fetcher;
+    private final int htmlNumberOfHeadings = 6;
 
     public PageProcessor(HtmlFetcher fetcher) {
         this.fetcher = fetcher;
@@ -37,7 +38,7 @@ public class PageProcessor {
 
     private List<String> extractHeadings(Document document) {
         List<String> headings = new ArrayList<>();
-        for (int i = 1; i <= 6; i++) {
+        for (int i = 1; i <= htmlNumberOfHeadings; i++) {
             Elements headerElements = document.select("h" + i);
             for (Element header : headerElements) {
                 String text = header.text().trim();

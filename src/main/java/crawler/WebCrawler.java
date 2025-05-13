@@ -16,14 +16,14 @@ public class WebCrawler {
     private final ExecutorService executor;
     private final CompletionService<Void> completionService;
     private final AtomicInteger submittedTaskCount = new AtomicInteger(0);
+    private final int numberOfThreadsForExecutor = 20;
 
     public WebCrawler(CrawlerConfig config, PageProcessor pageProcessor) {
         this.config = config;
         this.visitedPages = ConcurrentHashMap.newKeySet();
         this.resultsList = Collections.synchronizedList(new ArrayList<>());
         this.pageProcessor = pageProcessor;
-        this.executor = Executors.newFixedThreadPool(
-                Math.max(4, Runtime.getRuntime().availableProcessors()));
+        this.executor = Executors.newFixedThreadPool(numberOfThreadsForExecutor);
         this.completionService = new ExecutorCompletionService<>(executor);
     }
 
