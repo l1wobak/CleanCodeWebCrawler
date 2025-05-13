@@ -28,20 +28,20 @@ This will compile the crawler and package it into a runnable JAR in the `target/
 
 The crawler requires **3 arguments**:
 
-1. **Start URL** – The URL where crawling begins
+1. **Start URLs** – A comma-separated list of URLS where crawling begins
 2. **Depth** – How deep the crawler should traverse links
 3. **Allowed Domains** – A comma-separated list of domains to restrict crawling to
 
 ### Command Format
 
 ```
-java -jar target/java-web-crawler-1.0-SNAPSHOT.jar <StartUrl> <depth> <domain1,domain2,...>
+java -jar target/java-web-crawler-1.0-SNAPSHOT.jar <StartUrl1,StartUrl2,...> <depth> <domain1,domain2,...>
 ```
 
 ### Example
 
 ```
-java -jar target/java-web-crawler-1.0-SNAPSHOT.jar https://gilead-verein.at/ 2 https://gilead-verein.at/,http://www.klagenfurt.at/,https://www.stw.at
+java -jar target/java-web-crawler-1.0-SNAPSHOT.jar https://gilead-verein.at/,https://www.teigkeller.at/ 2 https://www.teigkeller.at/,https://gilead-verein.at/,http://www.klagenfurt.at/,https://www.stw.at
 ```
 
 This command will crawl the given page up to depth `2`, staying within the specified domains.
