@@ -43,14 +43,14 @@ class MarkdownWriterTest {
     void marksBrokenLinks() throws IOException {
         CrawledPage ok = createBasicPage();
         CrawledPage broken = createBrokenPage();
-        broken.fromStartUrls.add(URI.create(ok.url).toURL());
-        ok.links = List.of(broken.url);
+        broken.getFromStartUrls().add(URI.create(ok.getUrl()).toURL());
+        ok.setLinks(List.of(broken.getUrl()));
         Path file = tempDir.resolve("report-broken.md");
 
         new MarkdownWriter().write(
                 List.of(ok, broken),
                 file.toString(),
-                List.of(URI.create(ok.url).toURL())
+                List.of(URI.create(ok.getUrl()).toURL())
         );
 
         String output = Files.readString(file);
@@ -65,7 +65,7 @@ class MarkdownWriterTest {
         new MarkdownWriter().write(
                 List.of(page),
                 file.toString(),
-                List.of(URI.create(page.url).toURL())
+                List.of(URI.create(page.getUrl()).toURL())
         );
 
         String output = Files.readString(file);
@@ -81,7 +81,7 @@ class MarkdownWriterTest {
         new MarkdownWriter().write(
                 List.of(page),
                 file.toString(),
-                List.of(URI.create(page.url).toURL())
+                List.of(URI.create(page.getUrl()).toURL())
         );
 
         String output = Files.readString(file);
@@ -96,7 +96,7 @@ class MarkdownWriterTest {
         new MarkdownWriter().write(
                 List.of(page),
                 file.toString(),
-                List.of(URI.create(page.url).toURL())
+                List.of(URI.create(page.getUrl()).toURL())
         );
 
         String output = Files.readString(file);
@@ -107,57 +107,32 @@ class MarkdownWriterTest {
     // ---------- Utility Methods ----------
 
     private static CrawledPage createBasicPage() {
-        CrawledPage page = new CrawledPage();
-        page.url = "https://example.com";
-        page.depth = 0;
-        page.isBroken = false;
-        page.headings = List.of("Heading 1", "Heading 2");
-        page.links = List.of("https://example.com/about");
-        page.fromStartUrls.add(toUrl(page.url));
+        CrawledPage page = new CrawledPage("https://example.com", 0, List.of("Heading 1", "Heading 2"), List.of("https://example.com/about"), false);
+        page.getFromStartUrls().add(toUrl(page.getUrl()));
         return page;
     }
 
     private static CrawledPage createBrokenPage() {
-        CrawledPage page = new CrawledPage();
-        page.url = "https://broken-link.com";
-        page.depth = 1;
-        page.isBroken = true;
-        page.headings = List.of();
-        page.links = List.of();
-        page.fromStartUrls.add(toUrl(page.url));
+        CrawledPage page = new CrawledPage( "https://broken-link.com", 1, List.of(), List.of(), true);
+        page.getFromStartUrls().add(toUrl(page.getUrl()));
         return page;
     }
 
     private static CrawledPage createEmptyPage() {
-        CrawledPage page = new CrawledPage();
-        page.url = "https://empty.com";
-        page.depth = 0;
-        page.isBroken = false;
-        page.headings = List.of();
-        page.links = List.of();
-        page.fromStartUrls.add(toUrl(page.url));
+        CrawledPage page = new CrawledPage("https://empty.com", 0, List.of(), List.of(), false);
+        page.getFromStartUrls().add(toUrl(page.getUrl()));
         return page;
     }
 
     private static CrawledPage createSelfLinkPage() {
-        CrawledPage page = new CrawledPage();
-        page.url = "https://example.com";
-        page.depth = 0;
-        page.isBroken = false;
-        page.headings = List.of("Self-ref");
-        page.links = List.of("https://example.com");
-        page.fromStartUrls.add(toUrl(page.url));
+        CrawledPage page = new CrawledPage("https://example.com", 0, List.of("Self-ref"),List.of("https://example.com"), false );
+        page.getFromStartUrls().add(toUrl(page.getUrl()));
         return page;
     }
 
     private static CrawledPage createDuplicateLinkPage() {
-        CrawledPage page = new CrawledPage();
-        page.url = "https://example.com";
-        page.depth = 0;
-        page.isBroken = false;
-        page.headings = List.of("Duplicates");
-        page.links = List.of("https://example.com/about", "https://example.com/about");
-        page.fromStartUrls.add(toUrl(page.url));
+        CrawledPage page = new CrawledPage("https://example.com", 0, List.of("Duplicates"), List.of("https://example.com/about", "https://example.com/about"), false);
+        page.getFromStartUrls().add(toUrl(page.getUrl()));
         return page;
     }
 

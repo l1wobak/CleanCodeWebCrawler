@@ -45,8 +45,8 @@ class PageProcessorTest {
         CrawledPage page = processor.processPage(testUrl, 1);
 
         // Assert
-        assertFalse(page.isBroken);
-        assertEquals(List.of("Main Title", "Subheading", "Another"), page.headings);
+        assertFalse(page.isBroken());
+        assertEquals(List.of("Main Title", "Subheading", "Another"), page.getHeadings());
     }
 
     @Test
@@ -64,8 +64,8 @@ class PageProcessorTest {
         CrawledPage page = processor.processPage(testUrl, 0);
 
         // Assert
-        assertFalse(page.isBroken);
-        assertEquals(2, page.links.size());
+        assertFalse(page.isBroken());
+        assertEquals(2, page.getLinks().size());
     }
 
     @Test
@@ -77,9 +77,9 @@ class PageProcessorTest {
         CrawledPage result = processor.processPage(badUrl, 0);
 
         // Assert
-        assertTrue(result.isBroken);
-        assertTrue(result.headings.isEmpty());
-        assertTrue(result.links.isEmpty());
+        assertTrue(result.isBroken());
+        assertTrue(result.getHeadings().isEmpty());
+        assertTrue(result.getLinks().isEmpty());
     }
 
     @Test
@@ -94,9 +94,9 @@ class PageProcessorTest {
         CrawledPage result = processor.processPage(testUrl, 1);
 
         // Assert
-        assertFalse(result.isBroken);
-        assertTrue(result.headings.isEmpty());
-        assertTrue(result.links.isEmpty());
+        assertFalse(result.isBroken());
+        assertTrue(result.getHeadings().isEmpty());
+        assertTrue(result.getLinks().isEmpty());
     }
 
     @Test
@@ -115,8 +115,8 @@ class PageProcessorTest {
         CrawledPage result = processor.processPage(testUrl, 0);
 
         // Assert
-        assertFalse(result.isBroken);
-        assertEquals(List.of("Valid Heading"), result.headings);
+        assertFalse(result.isBroken());
+        assertEquals(List.of("Valid Heading"), result.getHeadings());
     }
 
     @Test
@@ -135,9 +135,9 @@ class PageProcessorTest {
         CrawledPage result = processor.processPage(testUrl, 2);
 
         // Assert
-        assertFalse(result.isBroken);
-        assertEquals(List.of("Same", "Same"), result.headings);
-        assertEquals(2, result.links.size());
+        assertFalse(result.isBroken());
+        assertEquals(List.of("Same", "Same"), result.getHeadings());
+        assertEquals(2, result.getLinks().size());
     }
 
 }

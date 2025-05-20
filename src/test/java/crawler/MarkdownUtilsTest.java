@@ -62,13 +62,13 @@ class MarkdownUtilsTest {
     void extractUniqueLinks_removesSelfAndDuplicateLinks() {
         // arrange
         CrawledPage page = new CrawledPage();
-        page.url = "https://example.com/";
-        page.links = List.of(
+        page.setUrl("https://example.com/");
+        page.setLinks(List.of(
                 "https://example.com/",
                 "https://example.com/#top",
                 "https://example.com/about",
                 "https://example.com/about/"
-        );
+        ));
 
         // act
         Set<String> links = MarkdownUtils.extractUniqueLinks(page);
@@ -82,8 +82,8 @@ class MarkdownUtilsTest {
     void extractUniqueLinks_handlesEmptyLinkList() {
         // arrange
         CrawledPage page = new CrawledPage();
-        page.url = "https://example.com";
-        page.links = List.of();
+        page.setUrl("https://example.com");
+        page.setLinks(List.of());
 
         // act
         Set<String> links = MarkdownUtils.extractUniqueLinks(page);
@@ -96,8 +96,8 @@ class MarkdownUtilsTest {
     void extractUniqueLinks_handlesNullLinkList() {
         // arrange
         CrawledPage page = new CrawledPage();
-        page.url = "https://example.com";
-        page.links = null;
+        page.setUrl("https://example.com");
+        page.setLinks(null);
 
         // act
         Set<String> links = MarkdownUtils.extractUniqueLinks(page);
@@ -110,8 +110,8 @@ class MarkdownUtilsTest {
     void extractUniqueLinks_skipsBlankLinks() {
         // arrange
         CrawledPage page = new CrawledPage();
-        page.url = "https://example.com";
-        page.links = List.of(" ", "https://example.com/valid");
+        page.setUrl("https://example.com");
+        page.setLinks(List.of(" ", "https://example.com/valid"));
 
         // act
         Set<String> links = MarkdownUtils.extractUniqueLinks(page);
@@ -125,12 +125,12 @@ class MarkdownUtilsTest {
     void isLinkBroken_returnsTrueIfLinkIsBroken() {
         // arrange
         CrawledPage page1 = new CrawledPage();
-        page1.url = "https://broken.com";
-        page1.isBroken = true;
+        page1.setUrl( "https://broken.com");
+        page1.setBroken(true);
 
         CrawledPage page2 = new CrawledPage();
-        page2.url = "https://ok.com";
-        page2.isBroken = false;
+        page2.setUrl( "https://ok.com");
+        page2.setBroken(false);
 
         // act & assert
         assertTrue(MarkdownUtils.isLinkBroken("https://broken.com", List.of(page1, page2)));
@@ -140,8 +140,8 @@ class MarkdownUtilsTest {
     void isLinkBroken_returnsFalseForWorkingPage() {
         // arrange
         CrawledPage page = new CrawledPage();
-        page.url = "https://ok.com";
-        page.isBroken = false;
+        page.setUrl("https://ok.com");
+        page.setBroken(false);
 
         // act
         boolean result = MarkdownUtils.isLinkBroken("https://ok.com", List.of(page));
@@ -154,8 +154,8 @@ class MarkdownUtilsTest {
     void isLinkBroken_returnsFalseIfLinkNotInPages() {
         // arrange
         CrawledPage page = new CrawledPage();
-        page.url = "https://another.com";
-        page.isBroken = false;
+        page.setUrl( "https://another.com");
+        page.setBroken(false);
 
         // act
         boolean result = MarkdownUtils.isLinkBroken("https://missing.com", List.of(page));

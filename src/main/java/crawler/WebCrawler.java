@@ -58,7 +58,7 @@ public class WebCrawler {
     private void crawlRecursively(String url, int currentDepth, URL rootStartUrl) {
         String normalized = WebCrawlerUtils.normalizeUrl(url);
 
-        if (!shouldCrawl(url, currentDepth)) return;
+        if (!shouldCrawl(normalized, currentDepth)) return;
 
         if (visitedPages.contains(normalized)) {
             addStartUrlToExistingPage(normalized, rootStartUrl);
@@ -69,12 +69,12 @@ public class WebCrawler {
         System.out.printf("Crawling at %s (depth %d)\n", url, currentDepth);
 
         CrawledPage page = pageProcessor.processPage(url, currentDepth);
-        page.fromStartUrls.add(rootStartUrl);
+        page.getFromStartUrls().add(rootStartUrl);
         resultsList.add(page);
 
-        if (page.isBroken || page.links == null) return;
+        if (page.isBroken() || page.getLinks() == null) return;
 
-        for (String link : page.links) {
+        for (String link : page.getLinks()) {
             String normalizedLink = WebCrawlerUtils.normalizeUrl(link);
             if (!normalizedLink.isEmpty()) {
                 submitCrawlTask(link, currentDepth + 1, rootStartUrl);
@@ -85,8 +85,8 @@ public class WebCrawler {
     private void addStartUrlToExistingPage(String normalizedUrl, URL rootStartUrl) {
         synchronized (resultsList) {
             for (CrawledPage page : resultsList) {
-                if (normalizedUrl.equals(WebCrawlerUtils.normalizeUrl(page.url))) {
-                    page.fromStartUrls.add(rootStartUrl);
+                if (normalizedUrl.equals(WebCrawlerUtils.normalizeUrl(page.getUrl()))) {
+                    page.getFromStartUrls().add(rootStartUrl);
                     break;
                 }
             }
@@ -98,8 +98,7 @@ public class WebCrawler {
         if (currentDepth > config.getMaxDepth()) return false;
         if (url.isEmpty()) return false;
 
-        String normalized = WebCrawlerUtils.normalizeUrl(url);
-        if (!WebCrawlerUtils.isDomainAllowed(normalized, config.getAllowedDomains())) return false;
+        if (!WebCrawlerUtils.isDomainAllowed(url, config.getAllowedDomains())) return false;
 
         return true;
     }

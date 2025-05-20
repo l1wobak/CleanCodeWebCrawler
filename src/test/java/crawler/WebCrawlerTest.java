@@ -39,8 +39,8 @@ class WebCrawlerTest {
         List<CrawledPage> result = crawler.crawl();
 
         assertEquals(1, result.size());
-        assertEquals("https://example.com", result.get(0).url);
-        assertFalse(result.get(0).isBroken);
+        assertEquals("https://example.com", result.get(0).getUrl());
+        assertFalse(result.get(0).isBroken());
     }
 
     @Test
@@ -51,7 +51,7 @@ class WebCrawlerTest {
         List<CrawledPage> result = crawler.crawl();
 
         assertEquals(2, result.size());
-        assertTrue(result.stream().anyMatch(p -> p.isBroken));
+        assertTrue(result.stream().anyMatch(CrawledPage::isBroken));
     }
 
     @Test
@@ -67,7 +67,7 @@ class WebCrawlerTest {
 
         assertNotNull(result);
         assertEquals(2, result.size());
-        assertTrue(result.stream().noneMatch(p -> p.url.contains("level2")));
+        assertTrue(result.stream().noneMatch(p -> p.getUrl().contains("level2")));
     }
 
     @Test
@@ -88,7 +88,7 @@ class WebCrawlerTest {
         List<CrawledPage> result = crawler.crawl();
 
         assertEquals(1, result.size());
-        assertEquals("https://example.com", result.get(0).url);
+        assertEquals("https://example.com", result.get(0).getUrl());
     }
 
     // -------------- Fake Page Processor --------------
@@ -100,20 +100,15 @@ class WebCrawlerTest {
         }
 
         public void stubPage(String url, List<String> links, boolean isBroken) {
-            CrawledPage page = new CrawledPage();
-            page.url = url;
-            page.depth = -1;
-            page.links = links;
-            page.headings = List.of("Fake heading");
-            page.isBroken = isBroken;
-            page.fromStartUrls =  ConcurrentHashMap.newKeySet();
+            CrawledPage page = new CrawledPage(url, -1, List.of("Fake heading"),links,  isBroken);
+            page.setFromStartUrls(ConcurrentHashMap.newKeySet());
             stubbedPages.put(url, page);
         }
 
         @Override
         public CrawledPage processPage(String url, int depth) {
             CrawledPage page = stubbedPages.getOrDefault(url, new CrawledPage());
-            page.depth = depth;
+            page.setDepth(depth);
             return page;
         }
     }

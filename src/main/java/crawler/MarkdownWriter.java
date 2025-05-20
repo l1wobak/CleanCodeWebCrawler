@@ -17,8 +17,8 @@ public class MarkdownWriter {
                 writer.write(String.format("## Results for: %s\n\n", root));
 
                 List<CrawledPage> forRoot = pages.stream()
-                        .filter(p -> p.fromStartUrls.contains(root))
-                        .sorted(Comparator.comparingInt(p -> p.depth))
+                        .filter(p -> p.getFromStartUrls().contains(root))
+                        .sorted(Comparator.comparingInt(CrawledPage::getDepth))
                         .toList();
 
                 for (CrawledPage page : forRoot) {
@@ -30,15 +30,15 @@ public class MarkdownWriter {
     }
 
     private void writePage(FileWriter writer, CrawledPage page, List<CrawledPage> allPages) throws IOException {
-        String indent = MarkdownUtils.indent(page.depth);
-        String arrow = "→".repeat(Math.max(1, page.depth));
+        String indent = MarkdownUtils.indent(page.getDepth());
+        String arrow = "→".repeat(Math.max(1, page.getDepth()));
 
-        writer.write(String.format("%s### %s %s\n", indent, arrow, page.url));
+        writer.write(String.format("%s### %s %s\n", indent, arrow, page.getUrl()));
         writer.write(String.format("%s- [%s] Page %s\n", indent,
-                page.isBroken ? "✗" : "✓",
-                page.isBroken ? "could not be loaded" : "loaded successfully"));
+                page.isBroken() ? "✗" : "✓",
+                page.isBroken() ? "could not be loaded" : "loaded successfully"));
 
-        writeHeadings(writer, page.headings, indent);
+        writeHeadings(writer, page.getHeadings(), indent);
         writeLinks(writer, page, allPages, indent);
     }
 

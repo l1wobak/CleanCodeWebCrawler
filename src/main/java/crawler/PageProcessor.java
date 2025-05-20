@@ -18,19 +18,13 @@ public class PageProcessor {
     }
 
     public CrawledPage processPage(String url, int depth) {
-        CrawledPage page = new CrawledPage();
-        page.url = url;
-        page.depth = depth;
-        page.headings = new ArrayList<>();
-        page.links = new ArrayList<>();
-        page.isBroken = false;
-
+        CrawledPage page = new CrawledPage(url, depth, new ArrayList<>(), new ArrayList<>(), false);
         try {
             Document document = fetcher.fetchDocumentFromUrl(url);
-            page.headings = extractHeadings(document);
-            page.links = extractLinks(document);
+            page.setHeadings(extractHeadings(document));
+            page.setLinks(extractLinks(document));
         } catch (Exception e) {
-            page.isBroken = true;
+            page.setBroken(true);
         }
 
         return page;

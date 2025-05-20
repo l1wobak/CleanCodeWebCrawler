@@ -8,12 +8,12 @@ public class MarkdownUtils {
 
     protected static Set<String> extractUniqueLinks(CrawledPage page) {
         Set<String> uniqueLinks = new LinkedHashSet<>();
-        if (page.links == null || page.links.isEmpty()) return uniqueLinks;
+        if (page.getLinks() == null || page.getLinks().isEmpty()) return uniqueLinks;
 
-        String currentPageURLNormalized = normalizeUrl(page.url);
+        String currentPageURLNormalized = normalizeUrl(page.getUrl());
         Set<String> seenNormalized = new HashSet<>();
 
-        for (String link : page.links) {
+        for (String link : page.getLinks()) {
             if (link == null || link.isBlank()) continue;
             String normalized = normalizeUrl(link);
             if (!normalized.equals(currentPageURLNormalized) && seenNormalized.add(normalized)) {
@@ -28,8 +28,8 @@ public class MarkdownUtils {
         // If it does, then we return whether or not that page is broken
         // This can only return true for pages that have been crawled, all uncrawled pages are always returned as not broken
         return pages.stream()
-                .filter(p -> p.url.equals(link))
-                .anyMatch(p -> p.isBroken);
+                .filter(p -> p.getUrl().equals(link))
+                .anyMatch(CrawledPage::isBroken);
     }
 
     protected static String normalizeUrl(String url) {
